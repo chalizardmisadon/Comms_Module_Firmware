@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include <Wire.h>
+
+#include "i2c_bus.h"
 #include "ina233.h"
 
 #define LED_PIN_0 PA0
@@ -8,7 +9,8 @@
 #define I2C_SCL PB10
 #define I2C_SDA PB11
 
-INA233 ina233(0x40);
+I2cBus Wire = I2cBus();
+Ina233 ina233 = Ina233(&(Wire), (uint8_t)0x40);
 
 void setup()
 {
@@ -33,7 +35,8 @@ void loop()
 		Wire.beginTransmission(addr);
 		if (0 == Wire.endTransmission()) {
 
-			uint8_t *device = ina233.getModel();
+			uint8_t model[6] = {0};
+			ina233.getModel(model);
 
 			while (1) {
 				led_state = !led_state;
